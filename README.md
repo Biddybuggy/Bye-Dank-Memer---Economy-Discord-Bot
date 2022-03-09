@@ -2,3 +2,4 @@
 2. Two aspects of the bot is still in development - a selling feature for the shop and a leaderboard.
 3. You should type in your own paths for the .json file's path. My path won't work on your computer.
 4. There might be some bugs here and there, please inform me if you find one :)
+5. You need to create your own Discord bot. Go to discord.com/developers/applications to do so.
