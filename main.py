@@ -900,26 +900,6 @@ async def ship(ctx,person1=None,person2=None):
     embed.add_field(name="Ship %", value=random.randint(0,100), inline=False)
     await ctx.send(embed=embed)
     return
-  elif person1 == "devin" and person2 == "chloe" or person1 == "chloe" and person2 == "devin":
-    embed=discord.Embed(title="Ship Machine", description=f"How suitable are {person1} and {person2} for each other", color=0x000000)
-    embed.add_field(name="Ship %", value=100, inline=False)
-    await ctx.send(embed=embed)
-    return
-  elif person1 == "dylanng" and person2 == "vanessa" or person1 == "vanessa" and person2 == "dylanng":
-    embed=discord.Embed(title="Ship Machine", description=f"How suitable are {person1} and {person2} for each other", color=0x000000)
-    embed.add_field(name="Ship %", value=110, inline=False)
-    await ctx.send(embed=embed)
-    return
-  elif person1 == "mualim" and person2 == "vanessa" or person1 == "vanessa" and person2 == "mualim":
-    embed=discord.Embed(title="Ship Machine", description=f"How suitable are {person1} and {person2} for each other", color=0x000000)
-    embed.add_field(name="Ship %", value=150, inline=False)
-    await ctx.send(embed=embed)
-    return
-  elif person1 == "edward" and person2 == "maddy" or person1 == "maddy" and person2 == "edward":
-    embed=discord.Embed(title="Ship Machine",description=f"How suitable are {person1} and {person2} for each other", color=0x000000)
-    embed.add_field(name="Ship %", value=100,inline=False)
-    await ctx.send(embed=embed)
-    return
   else:
     embed=discord.Embed(title="Ship Machine", description=f"How suitable are {person1} and {person2} for each other", color=0x000000)
     embed.add_field(name="Ship %", value=random.randint(0,100), inline=False)
