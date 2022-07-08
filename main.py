@@ -6,7 +6,7 @@ import time
 
 client = commands.Bot(command_prefix = "b!")
 
-mainshop = [{"name":"Coke","price":100,"description":"Have fun :)"},{"name":"Watch","price":2500,"description":"Time"},{"name":"Laptop","price":5000,"description":"Work"},{"name":"PC","price":10000,"description":"Gaming"}]
+mainshop = [{"name":"Coke","price":100,"description":"Have fun :)"},{"name":"Watch","price":2500,"description":"Time"},{"name":"Laptop","price":5000,"description":"Work"},{"name":"PC","price":10000,"description":"Gaming"},{"name":"GPU","price":20000,"description":"Build a Bitcoin mining rig lol"},{"name":"House","price":100000,"description":"Home"}]
 
 wallet_lim = 1000000000
 bank_lim = 100000000
@@ -22,20 +22,25 @@ async def on_ready():
 @client.event
 async def on_command_error(ctx, error):
   if isinstance(error, commands.CommandOnCooldown):
-    msg = "Hold your horses for {:.0f} more seconds, bud.".format(error.retry_after)
-    await ctx.send(msg)
+    msg = "Hold your horses for {:.1f} more seconds, bud.".format(error.retry_after)
+    await ctx.reply(msg)
     
 @client.command()
-async def helpme(ctx, command=None):
+async def helpme(ctx):
   embed=discord.Embed(title="Commands List", description="Always use the prefix b! before each command", color=0x000000)
-  embed.add_field(name="Currency", value="balance, bankrob, beg, buy, compare, daily, deposit, gamble, inventory, lb (still in development), monthly, rob, search, share, shop, snakeeyes, withdraw", inline=False)
-  embed.add_field(name="Fun", value="crystalball, eightball, height, simprate, ship, spam, waifu")
+  embed.add_field(name="Currency", value="balance, bankrob, beg, buy, compare, daily, deposit, dig, gamble, inventory, lb (still in development), monthly, postmeme, rob, search, share, shop, snakeeyes, withdraw", inline=False)
+  embed.add_field(name="Fun", value="attractive, crystalball, eightball, height, pickupline, quote, simprate, ship, spam, waifu")
+  embed.add_field(name="Miscellaneous", value="info, invite, ping, resetmydata", inline=False)
   embed.add_field(name="NSFW", value="None cause we r family friendly unlike Dank Memer", inline=False)
-  embed.add_field(name="Others", value="info, resetmydata", inline=False)
   embed.add_field(name="It Comes And It Goes", value="maxstat")
-  embed.set_footer(text="For more information abt a command, use the command b!help (command name)")
+  embed.set_footer(text=f"Hope it helps, {ctx.author}!")
   await ctx.send(embed=embed)
   return
+
+@client.command()
+async def invite(ctx):
+  embed = discord.Embed(title="Invite Bye Dank Memer to Your Server", description="https://tinyurl.com/byedankmemerinvite", color=0x000000)
+  await ctx.send(embed=embed)
 
 @client.command()
 async def info(ctx):
@@ -142,13 +147,13 @@ async def compare(ctx,member:discord.Member = None):
     return
 
 @client.command()
-@commands.cooldown(1,30,commands.BucketType.user)
+@commands.cooldown(1,3,commands.BucketType.user)
 async def beg(ctx):
   await open_account(ctx.author)
   bal = await update_bank(ctx.author)
 
   if bal[0] == wallet_lim:
-    await ctx.send(wallet_lim_msg)
+    await ctx.reply(wallet_lim_msg)
     return
 
   fates = ["get", "dontget"]
@@ -162,7 +167,7 @@ async def beg(ctx):
       actual_earning = wallet_lim - bal[0]
 
       embed = discord.Embed(title = random.choice(people), description = f"Oh you poor little beggar, take {actual_earning} coins", color=0x000000)
-      await ctx.send(embed = embed)
+      await ctx.reply(embed = embed)
 
       await update_bank(ctx.author,actual_earning)
 
@@ -171,7 +176,7 @@ async def beg(ctx):
       earnings = earnings
 
       embed = discord.Embed(title = random.choice(people), description = f"Oh you poor little beggar, take {earnings} coins", color=0x000000)
-      await ctx.send(embed = embed)
+      await ctx.reply(embed = embed)
 
       await update_bank(ctx.author,earnings)
 
@@ -180,7 +185,7 @@ async def beg(ctx):
   elif userfate == "dontget":
     embed = discord.Embed(title = random.choice(people), description="Sorry, but you don't deserve my money", color=0x000000)
     embed.set_footer(text = "Imagine begging lol")
-    await ctx.send(embed = embed)
+    await ctx.reply(embed = embed)
     return
 
 @client.command()
@@ -267,6 +272,34 @@ async def deposit(ctx,amount = None):
       await ctx.send(embed=embed)
 
 @client.command()
+async def dig(ctx):
+  await open_account(ctx.author)
+  bal = await update_bank(ctx.author)
+
+  earnings = random.randint(1000,20000)
+  fates = ["success", "fail"]
+  userfate = random.choice(fates)
+
+  if bal[0] == wallet_lim:
+     await ctx.reply(wallet_lim_msg)
+     return
+  else:
+    if userfate == "success":
+      earnings = random.randint(1000,20000)
+      
+      if bal[0] + earnings > wallet_lim:
+        actual_earnings = wallet_lim - bal[0]
+        await ctx.reply(f"You found {actual_earnings} coins!")
+        await update_bank(ctx.author,actual_earnings)
+        return
+      else:
+        await ctx.reply(f"You found {earnings} coins!")
+        await update_bank(ctx.author,earnings)
+        return
+    elif userfate == "fail":
+      await ctx.send("You sadly didn't find any coins...")
+     
+@client.command()
 async def withdraw(ctx,amount = None):
   await open_account(ctx.author)
   bal = await update_bank(ctx.author)
@@ -351,7 +384,38 @@ async def share(ctx,member:discord.Member = None,amount = None):
 
   await ctx.send(f"You shared {amount} coins to {member}.")
 
-#ToBeTested
+@client.command()
+async def postmeme(ctx):
+  await open_account(ctx.author)
+  bal = await update_bank(ctx.author)
+  if bal[0] == wallet_lim:
+    await ctx.send(wallet_lim_msg)
+    return
+  else:
+    fates = ["success", "failure"]
+    userfate = random.choice(fates)
+
+    if userfate == "success":
+      earnings = random.randint(1000,5000)
+      if bal[0] + earnings > wallet_lim:
+        actual_earnings = wallet_lim - bal[0]
+        await update_bank(ctx.author,actual_earnings)
+        embed = discord.Embed(title=f"{ctx.author}'s meme posting session", description = f"You posted a funny meme! You earned {actual_earnings} coins for your funny efforts.", color=0x000000)
+        await ctx.send(embed=embed)
+        return
+        
+      else:
+        await update_bank(ctx.author,earnings)
+        embed = discord.Embed(title=f"{ctx.author}'s meme posting session", description = f"You posted a funny meme! You earned {earnings} coins for your funny efforts.", color = 0x000000)
+        await ctx.send(embed = embed)
+        return
+        
+    elif userfate == "failure":
+        embed = discord.Embed(title = f"{ctx.author}'s meme posting session", description = "You posted a bad meme and now everybody is angry at you...", color = 0x000000)
+        embed.set_footer("Try harder next time.")
+        await ctx.send(embed = embed)
+        return
+
 @client.command()
 @commands.cooldown(1,30,commands.BucketType.user)
 async def rob(ctx,member:discord.Member = None):
@@ -431,7 +495,6 @@ async def rob(ctx,member:discord.Member = None):
       await ctx.send(f"Lol you got caught and had to pay {member} {loss} coins. Better luck next time, bro.")
       return
 
-#ToBeTested
 @client.command()
 @commands.cooldown(1,30,commands.BucketType.user)
 async def bankrob(ctx,member:discord.Member = None):
@@ -665,17 +728,17 @@ async def monthly(ctx):
   bal = await update_bank(ctx.author)
 
   if bal[0] == wallet_lim:
-    await ctx.send(wallet_lim_msg)
+    await ctx.reply(wallet_lim_msg)
     return
 
   monthly_reward = 100000
 
   if bal[0] + monthly_reward > wallet_lim:
-    await ctx.send("Sorry, but u can't get monthly coins anymore as ur wallet's almost full.")
+    await ctx.reply("Sorry, but u can't get monthly coins anymore as ur wallet's almost full.")
     return
   else:
     await update_bank(ctx.author,monthly_reward)
-    await ctx.send(f"You have received {monthly_reward} coins!")
+    await ctx.reply(f"You have received {monthly_reward} coins!")
     return
 
 @client.command()
@@ -685,17 +748,17 @@ async def daily(ctx):
   bal = await update_bank(ctx.author)
 
   if bal[0] == wallet_lim:
-    await ctx.send(wallet_lim_msg)
+    await ctx.reply(wallet_lim_msg)
     return
   
   daily_reward = 25000
 
   if bal[0] + daily_reward > wallet_lim:
-    await ctx.send("Sorry, but u can't get daily coins anymore as ur wallet is almost full.")
+    await ctx.reply("Sorry, but u can't get daily coins anymore as ur wallet is almost full.")
     return
   else:
     await update_bank(ctx.author,daily_reward)
-    await ctx.send(f"You have received {daily_reward} coins!")
+    await ctx.reply(f"You have received {daily_reward} coins!")
     return
 
 @client.command()
@@ -720,13 +783,13 @@ async def buy(ctx,item,amount = 1):
 
   if not res[0]:
     if res[1]==1:
-      await ctx.send("That object doesn't exist lol.")
+      await ctx.reply("That object doesn't exist lol.")
       return
     if res[1]==2:
-      await ctx.send(f"Bro you're too broke to buy {amount} {item}.")
-      return
+          await ctx.reply(f"Bro you're too broke to buy {amount} {item}.")
+          return
 
-  await ctx.send(f"You just bought {amount} {item}")
+  await ctx.reply(f"You just bought {amount} {item}")
 
 @client.command()
 @commands.cooldown(1,3,commands.BucketType.user)
@@ -785,22 +848,21 @@ async def open_account(user):
     users[str(user.id)]["wallet"] = 5000
     users[str(user.id)]["bank"] = 0
 
-  with open("type in mainbank.json's path", "w") as f:
+  with open("path", "w") as f:
     json.dump(users,f)
   return True
 
 async def get_bank_data():
-  with open("type in mainbank.json's path", "r") as f:
+  with open("path", "r") as f:
     users = json.load(f)
   return users
 
-#why is change = 0
 async def update_bank(user,change = 0,mode = "wallet"):
   users = await get_bank_data()
 
   users[str(user.id)][mode] += change
 
-  with open("type in mainbank.json's path", "w") as f:
+  with open("path", "w") as f:
     json.dump(users,f)
 
   bal = [users[str(user.id)]["wallet"],users[str(user.id)]["bank"]]
@@ -848,36 +910,32 @@ async def buy_this(user,item_name,amount):
     obj = {"item":item_name , "amount" : amount}
     users[str(user.id)]["inventory"] = [obj]
 
-  with open("type in mainbank.json's path","w") as f:
+  with open("path","w") as f:
     json.dump(users,f)
   
   await update_bank(user,cost*-1,"wallet")
 
   return [True,"Worked"]
 
-#Fun
 @client.command()
 @commands.cooldown(10,60,commands.BucketType.user)
-async def height(ctx,personname=None):
-  if personname == None:
+async def height(ctx,name=None):
+  if name == None:
     height = random.randint(130,200)
-    embed=discord.Embed(title="Height Machine", description=f"You are {height}cm tall", color=0x000000)
+    embed=discord.Embed(title="Height Machine", description=f"You are {height} cm tall", color=0x000000)
     await ctx.send(embed=embed)
-    return
   else:
-    embed=discord.Embed(title="Height Machine", description=f"How tall is {personname}", color=0x000000)
-    embed.add_field(name="Height in cm", value=random.randint(130, 200), inline=False)
+    height = random.randint(130,200)
+    embed=discord.Embed(title="Height Machine", description=f"{name} is {height} cm tall", color=0x000000)
     await ctx.send(embed=embed)
-    return
 
 @client.command()
 @commands.cooldown(10,60,commands.BucketType.user)
-async def simprate(ctx,name=None):
+async def simprate(ctx,name = None):
   if name == None:
     percentage = random.randint(0,100)
     embed=discord.Embed(title="Simp Rate Machine", description=f"You are {percentage}% simp", color=0x000000)
     await ctx.send(embed=embed)
-    return
   else:
     percentage = random.randint(0,100)
     embed=discord.Embed(title="Simp Rate Machine", description=f"{name} is {percentage}% simp", color=0x000000)
@@ -891,60 +949,72 @@ async def ship(ctx,person1=None,person2=None):
     await ctx.send("Who do you want to ship?")
     return
   elif person1 in ("Myself", "myself", "Me", "me") and person2 == None:
-    embed=discord.Embed(title="Ship Machine", description=f"How suitable are you and yourself for each other", color=0x000000)
+    embed=discord.Embed(title="Ship Machine", description=f"How suitable are you and yourself for each other?", color=0x000000)
     embed.add_field(name="Ship %", value=random.randint(0,100), inline=False)
     await ctx.send(embed=embed)
     return
   elif person2 == None:
-    embed=discord.Embed(title="Ship Machine", description=f"How suitable are you and {person1} for each other", color=0x000000)
+    embed=discord.Embed(title="Ship Machine", description=f"How suitable are you and {person1} for each other?", color=0x000000)
     embed.add_field(name="Ship %", value=random.randint(0,100), inline=False)
     await ctx.send(embed=embed)
     return
   else:
-    embed=discord.Embed(title="Ship Machine", description=f"How suitable are {person1} and {person2} for each other", color=0x000000)
+    embed=discord.Embed(title="Ship Machine", description=f"How suitable are {person1} and {person2} for each other?", color=0x000000)
     embed.add_field(name="Ship %", value=random.randint(0,100), inline=False)
     await ctx.send(embed=embed)
     return
-
+  
 @client.command()
 @commands.cooldown(10,60,commands.BucketType.user)
 async def eightball(ctx,question=None):
   emoji = "\N{BILLIARDS}"
   if question == None:
-    await ctx.send("Bruh what do you want to ask the 8ball?")
+    await ctx.reply("Bruh what do you want to ask the 8ball?")
     return
   else:
     replies = ["Yess, definitely!!!", "The answer is a big NO", "Yes?", "No?", "Perhaps", "Now's not the right time to tell you the answer"]
     reply = random.choice(replies)    
-    await ctx.send(f"{emoji} {reply}")
+    await ctx.reply(f"{emoji} {reply}")
   
 @client.command()
 @commands.cooldown(10,60,commands.BucketType.user)
 async def crystalball(ctx,question=None):
   if question == None:
-    await ctx.send("Bruh what do you want to ask the crystal ball?")
+    await ctx.reply("Bruh what do you want to ask the crystal ball?")
     return
   else:
-    await ctx.send("Pls wait for a few seconds as the crystal ball thinks...")
+    await ctx.reply("Pls wait for a few seconds as the crystal ball thinks...")
     time.sleep(5)
     replies = ["yess, definitely!!!", "the answer is a big NO", "yes?", "no?", "perhaps", "now's not the right time to tell you the answer"]
     reply = random.choice(replies)    
-    await ctx.send(f"The crystal ball says, {reply}")
+    await ctx.reply(f"The crystal ball says, {reply}")
     return
 
 @client.command()
 @commands.cooldown(10,60,commands.BucketType.user)
-async def waifu(ctx,member:discord.Member = None):
-  if member == None:
+async def waifu(ctx,name = None):
+  if name == None:
     percentage = random.randint(0,100)
     embed = discord.Embed(title="Waifu Rate Machine",description=f"You are {percentage}% waifu",color=0x000000)
     await ctx.send(embed=embed)
     return
   else:
     percentage = random.randint(0,100)
-    embed = discord.Embed(title="Waifu Rate Machine",description=f"{member} is {percentage}% waifu",color=0x000000)
+    embed = discord.Embed(title="Waifu Rate Machine",description=f"{name} is {percentage}% waifu",color=0x000000)
     await ctx.send(embed=embed)
     return
+
+@client.command()
+@commands.cooldown(10,60,commands.BucketType.user)
+async def attractive(ctx,name = None):
+  if name == None:
+    percentage = random.randint(0,100)
+    embed = discord.Embed(title="Attractiveness Rate Machine",description=f"You are {percentage}% attractive",color=0x000000)
+    await ctx.send(embed=embed)
+  else:
+    percentage = random.randint(0,100)
+    embed = discord.Embed(title="Attractiveness Rate Machine",description=f"{name} is {percentage}% attractive",color=0x000000)
+    await ctx.send(embed=embed)
 
 @client.command()
 @commands.cooldown(1,120,commands.BucketType.user)
@@ -984,5 +1054,27 @@ async def spam(ctx,song=None):
     await ctx.send(f"{emoji3}")
   else:
     await ctx.send("Lol I hvn't memorised the lyrics to that song yet")
- 
-client.run("enter your Bot's token here")
+
+@client.command()
+@commands.cooldown(1,3,commands.BucketType.user)
+async def quote(ctx):
+  quotes = ["Dogs are very ayam", "Never gonna give you up", "Never gonna let you down", "Never gonna run around and desert you",
+  "Never gonna make you cry", "Never gonna say goodbye", "Never gonna tell a lie and hurt you", "Ducks are infinitely powerful",
+  "Joe Mama -Sun Tzu, Art of War"]
+  await ctx.reply(f"{random.choice(quotes)}")
+
+@client.command()
+@commands.cooldown(1,3,commands.BucketType.user)
+async def pickupline(ctx):
+  pickup_lines = ["You are the E to my mc^2", "You are my sin 90 degrees and only", "You are my tan 45 degrees and only", 
+  "You are my sin^2x + cos^2x and only", "I code in Java, and you're the ;s of my code", "Our relationship is like a covalent bond; it is very strong",
+  "sqrt(-1) love you to the edge of the universe and back", "Astronauts need to go to space to see the world, but I only need to look into your eyes",
+  "Could you replace my x without asking y?"]
+  await ctx.reply(f"{random.choice(pickup_lines)}")
+
+@client.command()
+@commands.cooldown(1,3,commands.BucketType.user)
+async def ping(ctx):
+  await ctx.reply(f'Your ping is {round (client.latency * 1000)} ms')
+
+client.run("token")
