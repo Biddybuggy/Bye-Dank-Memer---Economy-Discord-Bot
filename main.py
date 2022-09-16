@@ -1058,9 +1058,8 @@ async def spam(ctx,song=None):
 @client.command()
 @commands.cooldown(1,3,commands.BucketType.user)
 async def quote(ctx):
-  quotes = ["Dogs are very ayam", "Never gonna give you up", "Never gonna let you down", "Never gonna run around and desert you",
-  "Never gonna make you cry", "Never gonna say goodbye", "Never gonna tell a lie and hurt you", "Ducks are infinitely powerful",
-  "Joe Mama -Sun Tzu, Art of War"]
+  quotes = ["Never gonna give you up", "Never gonna let you down", "Never gonna run around and desert you",
+  "Never gonna make you cry", "Never gonna say goodbye", "Never gonna tell a lie and hurt you", "Ducks are infinitely powerful"]
   await ctx.reply(f"{random.choice(quotes)}")
 
 @client.command()
