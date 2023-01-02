@@ -50,7 +50,7 @@ async def help(ctx):
     embed.add_field(name="Miscellaneous", value="calculate, greetings, info, invite, ping, resetmydata, timenow", inline=False)
     embed.add_field(name="NSFW", value="None cause we are family friendly unlike Dank Memer", inline=False)
     embed.add_field(name="It Comes And It Goes", value="maxstat",inline=False)
-    embed.add_field(name="Upcoming Commands", value="america, daily, leaderboard, monthly, progressbar, sell, stream")
+    embed.add_field(name="Upcoming Commands", value="america, daily, leaderboard, monthly, sell, stream")
     embed.set_footer(text=f"Hope it helps, {ctx.author}")
     await ctx.reply(embed=embed)
     return
