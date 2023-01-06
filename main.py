@@ -397,8 +397,6 @@ async def dig(ctx):
       elif 6 <= fate_number <= 10:
         await ctx.reply("You sadly didn't find any coins...")
 
-      # add a shovel broke fate
-
   else:
     await ctx.reply("You need a shovel to dig for coins, bud.")
     
